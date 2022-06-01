@@ -3,47 +3,67 @@
 #include <string.h>
 #include <limits.h>
 
-typedef struct 
-{
-   int value;
-   int tipo;
+typedef struct Brinquedo * p_brinquedo;
+
+typedef struct Brinquedo{
+    int value;
+    int tipo;
 } Brinquedo;
+
 
 typedef Brinquedo * p_brinquedo;
 
-void Intercala(p_brinquedo vetor, int inicio, int meio, int fim){
-    p_brinquedo aux = malloc(sizeof(Brinquedo)*(fim-inicio+1));
+void merge(p_brinquedo arr, int p, int q, int r) {
 
-    for (int i = inicio; i <= meio; i++){
-        aux[i] = vetor[i];
-    }
-    for (int j = meio + 1; j <= fim; j++){
-        aux[fim + meio - j] = vetor[j];
-    }
+    int n1 = q - p + 1;
+    int n2 = r - q;
 
-    int i = inicio;
-    int j = fim;
+    p_brinquedo L = malloc(n1 * sizeof(Brinquedo)), M = malloc(n2 * sizeof(Brinquedo));
 
-    for (int k = inicio; k <= fim; k++){
-        if (aux[i].value <= aux[j].value){
-            vetor[k] = aux[i];
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[p + i];
+    for (int j = 0; j < n2; j++)
+        M[j] = arr[q + 1 + j];
+
+    int i, j, k;
+    i = 0;
+    j = 0;
+    k = p;
+
+    while (i < n1 && j < n2) {
+        if (L[i].value <= M[j].value) {
+            arr[k] = L[i];
             i++;
+        } else {
+            arr[k] = M[j];
+            j++;
         }
-        else{
-            vetor[k] = aux[j];
-            j--;
-        }
+        k++;
+    }
+
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        arr[k] = M[j];
+        j++;
+        k++;
     }
 }
 
 
-void MergeSort(p_brinquedo vetor, int inicio, int fim){
-    if (inicio < fim){
-        int meio = (inicio + fim) / 2;
-        MergeSort(vetor, inicio, meio);
-        MergeSort(vetor, meio + 1, fim);
-        Intercala(vetor, inicio, meio, fim);
-    }
+void mergeSort(p_brinquedo arr, int l, int r) {
+  if (l < r) {
+    int m = l + (r - l) / 2;
+
+    mergeSort(arr, l, m);
+    mergeSort(arr, m + 1, r);
+
+    merge(arr, l, m, r);
+  }
 }
 
 
@@ -65,7 +85,7 @@ void MergeSort(p_brinquedo vetor, int inicio, int fim){
 
 int solve(int **m, int n) {
 
-    p_brinquedo brinquedos = malloc(sizeof(Brinquedo) * n * n); //vetor com todos os brinquedos
+    p_brinquedo brinquedos = malloc(sizeof(Brinquedo) * (n * n)); //vetor com todos os brinquedos
     int k = 0;
     for (int i = 0; i < n; i++){
         for (int j = 0; j < n; j++){
@@ -75,7 +95,7 @@ int solve(int **m, int n) {
         }
     }
 
-    MergeSort(brinquedos, 0, (n*n)-1);
+    mergeSort(brinquedos, 0, (n*n)-1);
 
     int * contador_de_tipo = malloc(sizeof(int) * n); //vetor que conta quantos brinquedos de cada tipo existem na iteração atual
     
@@ -123,6 +143,7 @@ int solve(int **m, int n) {
 
 int main() {
 
+
     int n;
     scanf("%d", &n);
 
@@ -136,19 +157,13 @@ int main() {
         for(int j = 1; j < n; ++j)
             m[i][j] = (m[i][j-1] * a + b) % c;
     }
-
-    for (int i = 0; i < n; i++){
-        for (int j = 0; j < n; j++){
-            printf("%d ", m[i][j]);
-        }
-    }
-
+    
     int answer = solve(m, n);
     printf("%d\n", answer);
     return 0;
 }
+
 /*
-Caso teste
 3
 1 1 4 10
 2 1 9 14
