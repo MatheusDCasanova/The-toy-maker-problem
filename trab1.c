@@ -83,6 +83,10 @@ void mergeSort(p_brinquedo arr, int l, int r) {
 
 int solve(int **m, int n) {
 
+    if (n == 1){
+        return 0; 
+    }
+
     p_brinquedo brinquedos = malloc(sizeof(Brinquedo) * (n * n)); //vetor com todos os brinquedos
     int k = 0;
     for (int i = 0; i < n; i++){
