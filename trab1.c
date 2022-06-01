@@ -3,8 +3,6 @@
 #include <string.h>
 #include <limits.h>
 
-typedef struct Brinquedo * p_brinquedo;
-
 typedef struct Brinquedo{
     int value;
     int tipo;
@@ -95,6 +93,7 @@ int solve(int **m, int n) {
         }
     }
 
+
     mergeSort(brinquedos, 0, (n*n)-1);
 
     int * contador_de_tipo = malloc(sizeof(int) * n); //vetor que conta quantos brinquedos de cada tipo existem na iteração atual
@@ -113,8 +112,8 @@ int solve(int **m, int n) {
     contador_de_tipo[brinquedos[i].tipo]++;
     brinquedos_diferentes++;
 
-    while (j < n-1){
-        while(brinquedos_diferentes < n && j < (n-1)){
+    while (j < (n*n)-1){
+        while(brinquedos_diferentes < n && j < (n*n) - 1){
             j++; 
             contador_de_tipo[brinquedos[j].tipo]++;
             if (contador_de_tipo[brinquedos[j].tipo] == 1){
