@@ -66,11 +66,12 @@ void MergeSort(p_brinquedo vetor, int inicio, int fim){
 int solve(int **m, int n) {
 
     p_brinquedo brinquedos = malloc(sizeof(Brinquedo) * n * n); //vetor com todos os brinquedos
-
+    int k = 0;
     for (int i = 0; i < n; i++){
         for (int j = 0; j < n; j++){
-            brinquedos[i].value = m[i][j];
-            brinquedos[i].tipo = i;
+            brinquedos[k].value = m[i][j];
+            brinquedos[k].tipo = i;
+            k++;
         }
     }
 
