@@ -3,19 +3,16 @@
 #include <string.h>
 #include <limits.h>
 
-struct Node
+typedef struct 
 {
    int value;
-   int toy_line_matrix;
-   int toy_column_matrix;
-   int toy_id_max;
-   int toy_id_min;
-} ;
+   int tipo;
+} Brinquedo;
 
-typedef struct Node * p_node;
+typedef Brinquedo * p_brinquedo;
 
-void Intercala(int *vetor, int inicio, int meio, int fim){
-    int *aux = malloc(sizeof(node)*(fim-inicio+1));
+void Intercala(p_brinquedo vetor, int inicio, int meio, int fim){
+    p_brinquedo aux = malloc(sizeof(Brinquedo)*(fim-inicio+1));
 
     for (int i = inicio; i <= meio; i++){
         aux[i] = vetor[i];
@@ -24,11 +21,11 @@ void Intercala(int *vetor, int inicio, int meio, int fim){
         aux[fim + meio - j] = vetor[j];
     }
 
-    i = inicio;
-    j = fim;
+    int i = inicio;
+    int j = fim;
 
     for (int k = inicio; k <= fim; k++){
-        if (aux[i] <= aux[j]){
+        if (aux[i].value <= aux[j].value){
             vetor[k] = aux[i];
             i++;
         }
@@ -40,7 +37,7 @@ void Intercala(int *vetor, int inicio, int meio, int fim){
 }
 
 
-void MergeSort(int *vetor, int inicio, int fim){
+void MergeSort(p_brinquedo vetor, int inicio, int fim){
     if (inicio < fim){
         int meio = (inicio + fim) / 2;
         MergeSort(vetor, inicio, meio);
@@ -59,27 +56,68 @@ void MergeSort(int *vetor, int inicio, int fim){
  */
 
 /*
-    1) ordenar cada linha (brinquedo) da matriz m (n * nlogn)
-    2) pegar o primeiro elemento de cada linha da matriz 
-    e criar um heap de mínimo e um heap de máximo com esses n elementos
-    3) verificar a diferença entre o mínimo e o máximo
-    (diferença entre a raíz do heap mínimo e a raíz do heap máximo)
-    4) se a diferença for menor que a diferença anterior, atualizar a diferença
-    5) pego o id (linha da matriz) do brinquedo da raiz do min heap e do max heap
-    6) 
+    1) pegar cada elemento da matriz e colocar em um vetor de brinquedos com suas propriedades
+    2) ordenar o vetor de nós
+    3) inicializar i e j como 0
 
 
 */
 
 int solve(int **m, int n) {
 
-    p_node min_heap = malloc(sizeof(Node)*n);
-    p_node max_heap = malloc(sizeof(Node)*n);
+    p_brinquedo brinquedos = malloc(sizeof(Brinquedo) * n * n); //vetor com todos os brinquedos
+
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < n; j++){
+            brinquedos[i].value = m[i][j];
+            brinquedos[i].tipo = i;
+        }
+    }
+
+    MergeSort(brinquedos, 0, (n*n)-1);
+
+    int * contador_de_tipo = malloc(sizeof(int) * n); //vetor que conta quantos brinquedos de cada tipo existem na iteração atual
+    
+    for (int i = 0; i < n; i++){
+        contador_de_tipo[i] = 0; //inicializar com 0
+    }
+
+    int brinquedos_diferentes = 0; //conta quantos brinquedos de tipos diferentes tenho englobados atualmente
 
     int min_diff = INT_MAX;
 
+    int j = 0;
+    int i = 0;
 
-    return 0;
+    contador_de_tipo[brinquedos[i].tipo]++;
+    brinquedos_diferentes++;
+
+    while (j < n-1){
+        while(brinquedos_diferentes < n && j < (n-1)){
+            j++; 
+            contador_de_tipo[brinquedos[j].tipo]++;
+            if (contador_de_tipo[brinquedos[j].tipo] == 1){
+                //esse tipo n estava antes dessa iteração
+                brinquedos_diferentes++;
+            }
+        }
+        //se sai do loop, tenho n brinquedos na minha solucao atual
+        // maior valor esta em brinquedos[j].value e menor em brinquedos[i].value
+        if (brinquedos_diferentes == n){
+            if ((brinquedos[j].value - brinquedos[i].value) < min_diff){
+                min_diff = (brinquedos[j].value - brinquedos[i].value);
+            }
+            contador_de_tipo[brinquedos[i].tipo]--;
+            if (contador_de_tipo[brinquedos[i].tipo] == 0)
+            {
+                brinquedos_diferentes--;
+            }
+                
+            i++;
+        }
+    }
+
+    return min_diff;
 }
 
 int main() {
