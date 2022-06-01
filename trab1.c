@@ -137,7 +137,20 @@ int main() {
             m[i][j] = (m[i][j-1] * a + b) % c;
     }
 
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < n; j++){
+            printf("%d ", m[i][j]);
+        }
+    }
+
     int answer = solve(m, n);
     printf("%d\n", answer);
     return 0;
 }
+/*
+Caso teste
+3
+1 1 4 10
+2 1 9 14
+4 2 5 23
+*/
